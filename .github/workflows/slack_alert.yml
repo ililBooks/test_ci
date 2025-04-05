@@ -23,13 +23,10 @@ jobs:
           distribution: 'temurin'
 
       - name: action-slack
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          author_name: ${{ steps.get_author_name.outputs.author_name }}
-          fields: repo,commit,message,author # action,eventName,ref,workflow,job,took 추가할 수 있음
-          mention: here
-          if_mention: failure,cancelled
+        uses: rtCamp/action-slack-notify@v2
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_CHANNEL: "#github-test-notifications"
+          SLACK_USERNAME: "GitHub Actions"
+          SLACK_MESSAGE: "test_ci repository 브랜치에 변경 사항이 적용되었습니다."
         if: always() # Pick up events even if the job fails or is canceled.
