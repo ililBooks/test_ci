@@ -41,3 +41,9 @@ jobs:
     name: Send Notification
     needs: test # job
     runs-on: ubuntu-latest
+
+    steps:
+      - name: Notify via Slack
+        uses: rtCamp/action-slack-notify@v2
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
