@@ -3,9 +3,8 @@ name: build and test
 on:
   push:
     branches:
-      - main
       - dev
-      - 'feat/**'
+
   pull_request:
     branches:
         - main
@@ -47,4 +46,5 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+      SLACK_MESSAGE: "test_ci repository 에 build and run test 완료하였습니다"
       if: always()
