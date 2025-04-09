@@ -57,19 +57,18 @@ jobs:
           SOURCE_DIR: deploy
           DEST_DIR: codedeploy/
 
-      - name: Trigger AWS CodeDeploy
-        uses: webfactory/create-aws-codedeploy-deployment/create-deployment@v0.5.0
+      - name: Deploy to AWS CodeDeploy
+        uses: aws-actions/aws-codedeploy-deploy@v1
         with:
           application-name: my-docker-app
-          deployment-group: docker-app-ec2-group
-          deployment-config: CodeDeployDefault.OneAtATime
-          s3-bucket: ec2-docker-deploy
-          s3-key: codedeploy/deploy.zip
+          deployment-group-name: docker-app-ec2-group
+          deployment-config-name: CodeDeployDefault.OneAtATime
           bundle-type: zip
+          s3-location: bucket=ec2-docker-deploy,key=codedeploy/deploy.zip,bundleType=zip
         env:
+          AWS_REGION: ap-northeast-2
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          GITHUB_REPOSITORY: ililBooks/test_ci
 
       - name: Notify via Slack
         uses: rtCamp/action-slack-notify@v2
