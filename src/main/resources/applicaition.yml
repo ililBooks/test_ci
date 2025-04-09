@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: test_ci
+  profiles: default
+  h2:
+    console:
+      enabled: true
+
+aws:
+  access-key-id: AKIAS4IBYANR4WZS7IQR
+  secret-access-key: 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
+  region: ap-northeast-2
+  s3:
+    bucket: ec2-docker-deploy
+
+slack:
+  webhook: https://hooks.slack.com/services/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

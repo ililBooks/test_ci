@@ -7,7 +7,7 @@ on:
 
 env:
   AWS_REGION: ap-northeast-2
-  ECR_REPOSITORY: your-ecr-repo
+  ECR_REPOSITORY: test_ci
   IMAGE_TAG: latest
 
 jobs:
@@ -35,26 +35,30 @@ jobs:
           docker tag $ECR_REPOSITORY:$IMAGE_TAG ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
           docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
 
-      - name: Zip deployment files (appspec.yml + scripts)
+      - name: Prepare deployment zip
         run: |
-          zip -r deploy.zip appspec.yml scripts
+          mkdir -p deploy/scripts
+          cp appspec.yml deploy/
+          cp -r scripts/* deploy/scripts/
+          cd deploy
+          zip -r deploy.zip .
 
       - name: Upload to S3
         uses: jakejarvis/s3-sync-action@master
         with:
           args: --acl private
         env:
-          AWS_S3_BUCKET: your-codedeploy-bucket
+          AWS_S3_BUCKET: ec2-docker-deploy
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ env.AWS_REGION }}
-          SOURCE_DIR: .
+          SOURCE_DIR: deploy
           DEST_DIR: codedeploy/
 
       - name: Trigger AWS CodeDeploy
-        uses: webfactory/create-aws-codedeploy-deployment@v1
+        uses: webfactory/create-aws-codedeploy-deployment/create-deployment@v0.5.0
         with:
-          application-name: test_ci
+          application-name: my-docker-app
           deployment-group: docker-app-ec2-group
           deployment-config: CodeDeployDefault.OneAtATime
           s3-bucket: ec2-docker-deploy
@@ -63,6 +67,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          GITHUB_REPOSITORY: ililBooks/test_ci
 
       - name: Notify via Slack
         uses: rtCamp/action-slack-notify@v2
