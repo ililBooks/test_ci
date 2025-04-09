@@ -26,7 +26,7 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_CHANNEL: "#github-test-notifications"
+          SLACK_CHANNEL: "#git-test-noti"
           SLACK_USERNAME: "GitHub Actions"
           SLACK_MESSAGE: "test_ci repository 브랜치에 변경 사항이 적용되었습니다."
         if: always() # Pick up events even if the job fails or is canceled.
